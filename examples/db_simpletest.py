@@ -33,22 +33,6 @@ import Adafruit_MAX31855.MAX31855 as MAX31855
 from threading import Thread
 
 
-class addTempToDbThread(Thread):
-	def __init__(self,tms,serOutput):
-	
-		try:
-			if tms.getDB() == None:
-				tms.checkDbConnection()
-			
-			print "Upload temp to db " + str(serOutput)
-			details = (tms.deviceID,str(serOutput))
-			tms.getDB().addTempByDevice(details)
-			print "Temp db upload successful"			
-		except Exception, e:
-			print "Error uploading temp to Db " + str(e)
-			#try to reconnect if DbConnection is null
-			tms.getDB() == None
-	
 
 class TmsRasp:
 	def __init__(self):

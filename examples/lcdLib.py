@@ -31,7 +31,7 @@ class LCDLib:
 		self.hostname = None
 		self.ip = None
 
-	def setHostName(self,hostname):
+	def setHostame(self,hostname):
 		self.hostname = hostname
 
 	def setIp(self,ip):
