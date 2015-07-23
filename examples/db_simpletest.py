@@ -39,13 +39,16 @@ class TmsRasp:
 		
 		print "Tms init main:"
 		self.initParams()
+		self.createTMSDevice()
 		self.lcd = LCDLib()
+		self.setLcdDetails()
 		self.mainLoopThread()
 		self.addTempToDbThread()	
 	
 	
 	def setLcdDetails(self):
-		self.lcd.setHostName(self.deviceID)
+		print "setLcdDetails deviceID:{0} deviceIP:{1}".format(self.deviceID,self.deviceIP)
+		self.lcd.setHostname(self.deviceID)
 		self.lcd.setIp(self.deviceIP)
 
 	def createTMSDevice(self):
@@ -53,8 +56,8 @@ class TmsRasp:
 		(ipaddr, deviceId ,gateway) = self.getDeviceIP()
 		print "device id : " + deviceId
 		try:
-			details = (deviceId,ipaddr)
-			self.getDB().createDeviceID(details)
+			#details = (deviceId,ipaddr)
+			#self.getDB().createDeviceID(details)
 			self.deviceID = deviceId
 			self.deviceIP = ipaddr
 		except Exception, e:
@@ -153,9 +156,6 @@ class TmsRasp:
 
 			time.sleep(1.0)
 
-			#Add to Database
-			#self.addTempToDbThread(temp)
-			#self.addTempToDB(temp)
 				
 	def lcdTempOutput(self,temp):
 		self.lcd.updateCurrentTemp(temp)
@@ -168,8 +168,9 @@ class TmsRasp:
 			#self.__db__ = DbConnect()
 			if dbConn.connect() == True:
 				self.__db__ = dbConn
-			
-			self.createTMSDevice()
+			details = (self.deviceID,self.deviceIP)
+			self.getDB().createDeviceID(details)
+	
 			
 		except Exception, e:
 			self.__db__ = None

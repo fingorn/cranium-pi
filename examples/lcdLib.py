@@ -31,7 +31,7 @@ class LCDLib:
 		self.hostname = None
 		self.ip = None
 
-	def setHostame(self,hostname):
+	def setHostname(self,hostname):
 		self.hostname = hostname
 
 	def setIp(self,ip):
@@ -51,9 +51,12 @@ class LCDLib:
 		self.refreshTemp()		
 
 	def refreshTemp(self):
+		header = '{0: <20.20}'.format('TMS Version 1.0')
+		ip = '{0: <20.20}'.format('IP:'+self.ip)
+		temp = '{0: <20.20}'.format('Temp(C): '+str(self.currTempInC))
+		device = '{0: <20.20}'.format(self.hostname)
 		self.lcd.clear()
-		self.lcd.message('TMS Version 1.0     ' +  
-				'Temp(C): ' + str(self.currTempInC))
+		self.lcd.message(header+ ip + temp + device)
 
 
 if __name__ == '__main__':
