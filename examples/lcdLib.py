@@ -48,15 +48,26 @@ class LCDLib:
 
 	def updateCurrentTemp(self,temp):
 		self.currTempInC = temp
-		self.refreshTemp()		
+		self.refreshTemp()
+	
+	def updateHeaders(self):
+		header = '{0: <20.20}'.format('TMS Version 1.0')
+		ip = '{0: <20.20}'.format('IP:'+self.ip)
+		self.lcd.setCursor(0,0)
+		self.lcd.message(header)
+	
 
 	def refreshTemp(self):
 		header = '{0: <20.20}'.format('TMS Version 1.0')
 		ip = '{0: <20.20}'.format('IP:'+self.ip)
 		temp = '{0: <20.20}'.format('Temp(C): '+str(self.currTempInC))
 		device = '{0: <20.20}'.format(self.hostname)
+		blank = '{0: <20.20}'.format('')
 		self.lcd.clear()
-		self.lcd.message(header+ ip + temp + device)
+		#self.lcd.message(header+ ip + temp + device)
+		#self.lcd.setCursor(0,2)
+		self.lcd.message(device+temp+ip+header)
+
 
 
 if __name__ == '__main__':
