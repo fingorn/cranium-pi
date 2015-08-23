@@ -37,6 +37,12 @@ class LCDLib:
 	def setIp(self,ip):
 		self.ip = ip
 
+	def getIp(self):
+		if self.ip is None:
+			return "Not connected"
+		else:
+			return self.ip
+
 	def setupOutput(self):
 		self.lcd.set_backlight(0)
 		time.sleep(2)
@@ -59,7 +65,7 @@ class LCDLib:
 
 	def refreshTemp(self):
 		header = '{0: <20.20}'.format('TMS Version 1.0')
-		ip = '{0: <20.20}'.format('IP:'+self.ip)
+		ip = '{0: <20.20}'.format('IP:'+self.getIp())
 		temp = '{0: <20.20}'.format('Temp(C): '+str(self.currTempInC))
 		device = '{0: <20.20}'.format(self.hostname)
 		blank = '{0: <20.20}'.format('')

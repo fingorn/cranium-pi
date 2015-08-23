@@ -43,6 +43,7 @@ class TmsRasp:
 		self.lcd = LCDLib()
 		self.setLcdDetails()
 		self.mainLoopThread()
+		#self.thresholdThread()
 		self.addTempToDbThread()	
 	
 	
@@ -65,13 +66,20 @@ class TmsRasp:
 
 
 	def getDeviceIP(self):
-		gw = os.popen("ip -4 route show default").read().split()
-		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		s.connect((gw[2], 0))
-		ipaddr = s.getsockname()[0]
-		gateway = gw[2]
-		host = socket.gethostname()
-		print ("IP:", ipaddr, " GW:", gateway, " Host:", host)
+		ipaDDR = None
+		host = 'Unidentified'
+		gateway = None
+		try:
+			gw = os.popen("ip -4 route show default").read().split()
+			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			host = socket.gethostname()
+			s.connect((gw[2], 0))
+			ipaddr = s.getsockname()[0]
+			gateway = gw[2]
+			print ("IP:", ipaddr, " GW:", gateway, " Host:", host)
+		except Exception, e:
+			print "Unable to obtain IP address"
+			
 		return (ipaddr,host,gateway)		
 
 
@@ -158,6 +166,7 @@ class TmsRasp:
 
 				
 	def lcdTempOutput(self,temp):
+		#self.setLcdDetails()
 		self.lcd.updateCurrentTemp(temp)
 
 	def checkDbConnection(self):
@@ -180,6 +189,16 @@ class TmsRasp:
 
 	def getDB(self):
 		return self.__db__
+
+	def thresholdThread(self):
+		th = Thread(target = self.thresholdLoop)
+		th.start()
+		print "Threshold Thread start"
+
+	def thresholdLoop(self):
+			
+
+		pass
 
 if __name__ == '__main__':
 	instance = TmsRasp()
