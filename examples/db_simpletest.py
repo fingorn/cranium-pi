@@ -31,7 +31,8 @@ from lcdLib import LCDLib
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MAX31855.MAX31855 as MAX31855
 from threading import Thread
-
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
 
 
 class TmsRasp:
@@ -191,14 +192,16 @@ class TmsRasp:
 		return self.__db__
 
 	def thresholdThread(self):
+		#GPIO.setmode(GPIO.BCM)
+		#GPIO.setup(2,i)
 		th = Thread(target = self.thresholdLoop)
 		th.start()
 		print "Threshold Thread start"
 
 	def thresholdLoop(self):
-			
+		while True:
+			pass			
 
-		pass
 
 if __name__ == '__main__':
 	instance = TmsRasp()
