@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from threading import Thread
 import time
 import RPi.GPIO as GPIO
 import tmsconfig
@@ -13,7 +14,7 @@ class ThresholdControl:
 		#Setup configs
 		self.setThresholdArray()
 		print "Start Loop"
-		self.listener()
+		self.listenerThread()
 
 	def getThldIdx(self):
 		return self.currThresholdIndex
@@ -31,7 +32,20 @@ class ThresholdControl:
 		#Test print
 		print "Current threshold value: {0} : {1} - {2} ".format(self.th_name,self.min_temp,self.max_temp)
 
-	def listener(self):
+	def getThresholdStatus(self,temp):
+		if (float(temp) < float(self.min_temp)):
+			return "Low"
+		elif (float(self.min_temp) <= float(temp) <= float(self.max_temp)):
+			return "OK"
+		else:
+			return "HI"
+
+	def listenerThread(self):
+		thread = Thread(target = self.mainLoop)
+		thread.start()
+		print "ThresholdControl Main loop started"
+
+	def mainLoop(self):
 		prev_input = 0
 		prev_input = GPIO.input(17)
 		while True:

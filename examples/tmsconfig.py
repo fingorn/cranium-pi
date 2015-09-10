@@ -10,5 +10,15 @@ temp_thresholds=[
 		'max_temp':260},
 	{'name':'D',
 		'min_temp':261,
-		'max_temp':280}
+		'max_temp':280},
+	{'name':'E',
+		'min_temp':25,
+		'max_temp':32},
+	{'name':'F',
+		'min_temp':33,
+		'max_temp':50},
+	{'name':'G',
+		'min_temp':10,
+		'max_temp':20}
+
 ]

@@ -30,12 +30,24 @@ class LCDLib:
 		self.currTempInC = None
 		self.hostname = None
 		self.ip = None
+		self.thresholdValues = ['A',0,0]
+		self.status = "-"
+
+	def setThresholdValues(self,thVals):
+		if (thVals != self.thresholdValues):
+			self.thresholdValues = thVals
+	
+	def getThresholdValues(self):
+		return self.thresholdValues	
 
 	def setHostname(self,hostname):
 		self.hostname = hostname
 
 	def setIp(self,ip):
 		self.ip = ip
+
+	def setStatus(self,status):
+		self.status = status
 
 	def getIp(self):
 		if self.ip is None:
@@ -66,14 +78,15 @@ class LCDLib:
 	def refreshTemp(self):
 		header = '{0: <20.20}'.format('TMS Version 1.0')
 		ip = '{0: <20.20}'.format('IP:'+self.getIp())
-		temp = '{0: <20.20}'.format('Temp(C): '+str(self.currTempInC))
+		temp = '{0: <20.20}'.format('Temp(C): '+str(self.currTempInC)+ ' ' + self.status)
 		device = '{0: <20.20}'.format(self.hostname)
 		blank = '{0: <20.20}'.format('')
+		threshold = '{0: <20.20}'.format("Mode " + self.getThresholdValues()[0] + ":" + str(self.getThresholdValues()[1])+ "-"+ str(self.getThresholdValues()[2]) + "c")
 		self.lcd.clear()
 		#self.lcd.message(header+ ip + temp + device)
 		#self.lcd.setCursor(0,2)
-		self.lcd.message(device+temp+ip+header)
-
+		#self.lcd.message(device+temp+ip+header)
+		self.lcd.message(device+temp+ip+threshold)
 
 
 if __name__ == '__main__':

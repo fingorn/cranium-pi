@@ -31,9 +31,7 @@ from lcdLib import LCDLib
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MAX31855.MAX31855 as MAX31855
 from threading import Thread
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-
+from ThresholdControl import ThresholdControl
 
 class TmsRasp:
 	def __init__(self):
@@ -43,8 +41,8 @@ class TmsRasp:
 		self.createTMSDevice()
 		self.lcd = LCDLib()
 		self.setLcdDetails()
+		self.thresholdThread()
 		self.mainLoopThread()
-		#self.thresholdThread()
 		self.addTempToDbThread()	
 	
 	
@@ -94,6 +92,7 @@ class TmsRasp:
 		self.deviceID = None
 		self.deviceIP = None
 		self.currTemp = None
+		self.thresholdMain = None
 
 	# Define a function to convert celsius to fahrenheit.
 	def c_to_f(self,c):
@@ -143,6 +142,8 @@ class TmsRasp:
 			return valid
 
 	def mainLoopThread(self):
+		#Wait 3 seconds to start main loop
+		#time.sleep(3)
 		thread = Thread(target = self.mainLoop)
 		thread.start()
 		print "Main Loop Started"
@@ -158,12 +159,19 @@ class TmsRasp:
 			#print '    Internal Temperature: {0:0.3F}*C / {1:0.3F}*F'.format(internal, self.c_to_f(internal))
 			tempInF = self.c_to_f(temp)
 			#print "temp in C : " + str(temp)
-			
+		
+			#setLcdThresholdValues
+			self.setlcdThresholdValues(temp)		
 
 			#print to LCD
 			self.lcdTempOutput(temp)
 
 			time.sleep(1.0)
+
+	def setlcdThresholdValues(self,temp):
+		self.lcd.setThresholdValues(self.getThresholdMain().getThldValues())
+		status = self.getThresholdMain().getThresholdStatus(temp)
+		self.lcd.setStatus(status)
 
 				
 	def lcdTempOutput(self,temp):
@@ -192,15 +200,11 @@ class TmsRasp:
 		return self.__db__
 
 	def thresholdThread(self):
-		#GPIO.setmode(GPIO.BCM)
-		#GPIO.setup(2,i)
-		th = Thread(target = self.thresholdLoop)
-		th.start()
-		print "Threshold Thread start"
-
-	def thresholdLoop(self):
-		while True:
-			pass			
+		self.thresholdMain = ThresholdControl()
+		print "Current threshold :" + str(self.thresholdMain.getThldValues())
+	
+	def getThresholdMain(self):
+		return self.thresholdMain
 
 
 if __name__ == '__main__':
