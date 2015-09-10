@@ -6,11 +6,23 @@ import RPi.GPIO as GPIO
 import tmsconfig
 
 class ThresholdControl:
+	TH_HIGH = "HI"
+	TH_LOW = "LOW"
+	TH_OK = "Ok"
+
 	def __init__(self):
 		print "Setup GPIO"
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(17,GPIO.IN)
-		
+
+		#Setup feedback pin ( Pin 2)
+		GPIO.setup(2,GPIO.OUT)
+		GPIO.output(2,False)
+
+		#Setup Warning Pin (Pin 23)
+		GPIO.setup(23,GPIO.OUT)
+		GPIO.output(23,False)
+
 		#Setup configs
 		self.setThresholdArray()
 		print "Start Loop"
@@ -20,6 +32,7 @@ class ThresholdControl:
 		return self.currThresholdIndex
 
 	def setThresholdArray(self):
+		self.thresholdStatus = None
 		self.thresholdMap = tmsconfig.temp_thresholds
 		self.currThresholdIndex = 0
 		self.thresholdCount = len(self.thresholdMap)
@@ -33,12 +46,30 @@ class ThresholdControl:
 		print "Current threshold value: {0} : {1} - {2} ".format(self.th_name,self.min_temp,self.max_temp)
 
 	def getThresholdStatus(self,temp):
+		
 		if (float(temp) < float(self.min_temp)):
-			return "Low"
+			self.thresholdStatus = ThresholdControl.TH_LOW
+			self.setWarningPin(True)
+			self.setOkPin(False)
 		elif (float(self.min_temp) <= float(temp) <= float(self.max_temp)):
-			return "OK"
+			self.thresholdStatus = ThresholdControl.TH_OK
+			self.setOkPin(True)
+			self.setWarningPin(False)
 		else:
-			return "HI"
+			self.thresholdStatus = ThresholdControl.TH_HIGH
+			self.setOkPin(False)	
+			self.setWarningPin(True)	
+
+				
+		return self.thresholdStatus
+
+	def setOkPin(self,value):
+		GPIO.output(2,value)
+		print "Ok pin value :" + str(value)
+	
+	def setWarningPin(self,value):
+		GPIO.output(23,value)
+		print "WarningPin value :" + str(value)
 
 	def listenerThread(self):
 		thread = Thread(target = self.mainLoop)

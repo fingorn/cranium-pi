@@ -65,7 +65,7 @@ class TmsRasp:
 
 
 	def getDeviceIP(self):
-		ipaDDR = None
+		ipaddr = None
 		host = 'Unidentified'
 		gateway = None
 		try:

@@ -86,7 +86,7 @@ class LCDLib:
 		#self.lcd.message(header+ ip + temp + device)
 		#self.lcd.setCursor(0,2)
 		#self.lcd.message(device+temp+ip+header)
-		self.lcd.message(device+temp+ip+threshold)
+		self.lcd.message(header+temp+ip+threshold)
 
 
 if __name__ == '__main__':
