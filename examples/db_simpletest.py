@@ -78,7 +78,11 @@ class TmsRasp:
 			print ("IP:", ipaddr, " GW:", gateway, " Host:", host)
 		except Exception, e:
 			print "Unable to obtain IP address"
-			
+				
+		if ipaddr == None:
+			self.deviceIpSet = False
+		else:
+			self.deviceIpSet = True
 		return (ipaddr,host,gateway)		
 
 
@@ -92,6 +96,7 @@ class TmsRasp:
 		self.deviceID = None
 		self.deviceIP = None
 		self.currTemp = None
+		self.deviceIpSet = False
 		self.thresholdMain = None
 
 	# Define a function to convert celsius to fahrenheit.
@@ -128,6 +133,7 @@ class TmsRasp:
 				print "Error uploading temp to Db " + str(e)
 				#try to reconnect if DbConnection is null
 				self.__db__ = None
+				self.deviceIpSet = False
 			time.sleep(1.0)
 			dbCounter = dbCounter + 1
 			print "database update counter " + str(dbCounter)
@@ -176,6 +182,9 @@ class TmsRasp:
 				
 	def lcdTempOutput(self,temp):
 		#self.setLcdDetails()
+		if not self.deviceIpSet:
+			self.createTMSDevice()
+			self.setLcdDetails()
 		self.lcd.updateCurrentTemp(temp)
 
 	def checkDbConnection(self):

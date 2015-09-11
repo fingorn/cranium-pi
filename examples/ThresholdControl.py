@@ -65,11 +65,11 @@ class ThresholdControl:
 
 	def setOkPin(self,value):
 		GPIO.output(2,value)
-		print "Ok pin value :" + str(value)
+		#print "Ok pin value :" + str(value)
 	
 	def setWarningPin(self,value):
 		GPIO.output(23,value)
-		print "WarningPin value :" + str(value)
+		#print "WarningPin value :" + str(value)
 
 	def listenerThread(self):
 		thread = Thread(target = self.mainLoop)
