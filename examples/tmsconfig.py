@@ -1,4 +1,7 @@
 temp_thresholds=[
+	{'name':'IDLE',
+		'min_temp':20,
+		'max_temp':35},
 	{'name':'A',
 		'min_temp':200,
 		'max_temp':220},
@@ -11,14 +14,5 @@ temp_thresholds=[
 	{'name':'D',
 		'min_temp':261,
 		'max_temp':280},
-	{'name':'E',
-		'min_temp':25,
-		'max_temp':32},
-	{'name':'F',
-		'min_temp':33,
-		'max_temp':50},
-	{'name':'G',
-		'min_temp':10,
-		'max_temp':20}
 
 ]
