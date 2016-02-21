@@ -9,6 +9,8 @@ class ThresholdControl:
 	TH_HIGH = "HI"
 	TH_LOW = "LOW"
 	TH_OK = "Ok"
+	TH_WAIT = "WAIT"
+	TH_COUNTER_LIMIT = 9
 
 	def __init__(self):
 		print "Setup GPIO"
@@ -31,7 +33,24 @@ class ThresholdControl:
 	def getThldIdx(self):
 		return self.currThresholdIndex
 
+	def addThSlpCounter(self):
+		print "Incrementing Threshold Sleep Counter"
+		if self.getThSlpCounter() > 20:
+			self.th_slp_counter = 15
+		print "Th Slp Counter +1"
+		self.th_slp_counter = self.th_slp_counter + 1
+		
+
+	def getThSlpCounter(self):
+		print "Current Sleep Counter Value : %s" % (self.th_slp_counter)
+		return self.th_slp_counter
+
+	def resetThSlpCounter(self):
+		print "Sleep Counter Reset to 0"
+		self.th_slp_counter=0
+
 	def setThresholdArray(self):
+		self.th_slp_counter = 0
 		self.thresholdStatus = None
 		self.thresholdMap = tmsconfig.temp_thresholds
 		self.currThresholdIndex = 0
@@ -58,7 +77,11 @@ class ThresholdControl:
 		else:
 			self.thresholdStatus = ThresholdControl.TH_HIGH
 			self.setOkPin(False)	
-			self.setWarningPin(True)	
+			self.setWarningPin(True)
+
+		#Override with thresholdSleepTimer
+		if self.getThSlpCounter() < ThresholdControl.TH_COUNTER_LIMIT:
+			self.thresholdStatus = ThresholdControl.TH_WAIT
 
 				
 		return self.thresholdStatus
@@ -68,8 +91,14 @@ class ThresholdControl:
 		#print "Ok pin value :" + str(value)
 	
 	def setWarningPin(self,value):
-		GPIO.output(23,value)
-		#print "WarningPin value :" + str(value)
+		#Added Threshold Sleep Counter
+		if self.getThSlpCounter() > ThresholdControl.TH_COUNTER_LIMIT:
+			GPIO.output(23,value)
+			#print "WarningPin value :" + str(value)
+		else:
+			GPIO.output(23,False)
+	
+			
 
 	def listenerThread(self):
 		thread = Thread(target = self.mainLoop)
@@ -92,6 +121,7 @@ class ThresholdControl:
 
 	def thresholdCycle(self):
 		self.incThldIdx()
+		self.resetThSlpCounter()
 		self.setThresholdValues()
 	
 	def incThldIdx(self):

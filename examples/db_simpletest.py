@@ -130,13 +130,13 @@ class TmsRasp:
 						print "Invalid temperature detected"
 
 			except Exception, e:
-				print "Error uploading temp to Db " + str(e)
+				#print "Error uploading temp to Db " + str(e)
 				#try to reconnect if DbConnection is null
 				self.__db__ = None
 				self.deviceIpSet = False
 			time.sleep(1.0)
-			dbCounter = dbCounter + 1
-			print "database update counter " + str(dbCounter)
+			#dbCounter = dbCounter + 1
+			#print "database update counter " + str(dbCounter)
 	
 	def strToF(self,num):
 		valid = False
@@ -167,7 +167,10 @@ class TmsRasp:
 			#print "temp in C : " + str(temp)
 		
 			#setLcdThresholdValues
-			self.setlcdThresholdValues(temp)		
+			self.setlcdThresholdValues(temp)
+
+			#inc thresholdMain sleep counter
+			self.getThresholdMain().addThSlpCounter()		
 
 			#print to LCD
 			self.lcdTempOutput(temp)
@@ -190,7 +193,7 @@ class TmsRasp:
 	def checkDbConnection(self):
 		
 		try:
-			print 'checking db connection.'
+			#print 'checking db connection.'
 			dbConn = DbConnect()
 			#self.__db__ = DbConnect()
 			if dbConn.connect() == True:
@@ -201,7 +204,7 @@ class TmsRasp:
 			
 		except Exception, e:
 			self.__db__ = None
-			print 'Unable to connect to db.. retrying... ' + str(e)
+			#print 'Unable to connect to db.. retrying... ' + str(e)
 			
 
 
